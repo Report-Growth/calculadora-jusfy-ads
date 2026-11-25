@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Calculadora Jusfy Ads</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: duas colunas (entradas | resultado escuro), funil de 4 etapas logo abaixo, depois buscas e premissas. */
+:root{
+  --bg:#FFFFFF; --surface:#FFFFFF; --soft:#F6F8F7; --line:#E3E6EA; --line-strong:#D0D4DA;
+  --fg:#111219; --fg2:#3D3F4C; --muted:#5E6070; --faint:#80828F;
+  --accent:#01AB7D; --accent-ink:#00805D; --accent-soft:#E8F7F1; --accent-line:#BFE9D8;
+  --card:#111219; --card-fg:#FAFAFA; --card-muted:#A9AAB8; --card-line:#2A2C37; --card-soft:#1A1C25; --card-accent:#41C78F;
+  --warn:#9A5B00; --warn-soft:#FFF5E3; --warn-line:#F3D9A6;
+  --bar-1:#CFEFE2; --bar-2:#8FDCBF; --bar-3:#2FBF8C; --bar-4:#00805D;
+  --font:'Noto Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E0F14; --surface:#15171E; --soft:#1A1D25; --line:#2A2D37; --line-strong:#3A3E4A;
+  --fg:#F2F3F5; --fg2:#CDCFD6; --muted:#A0A3AF; --faint:#7D808C;
+  --accent:#2FCB95; --accent-ink:#5ADBAA; --accent-soft:#132A22; --accent-line:#21513F;
+  --card:#07080B; --card-fg:#FAFAFA; --card-muted:#A9AAB8; --card-line:#262833; --card-soft:#14161D; --card-accent:#4FD69C;
+  --warn:#F0B55C; --warn-soft:#2A2113; --warn-line:#5A4422;
+  --bar-1:#1F3D32; --bar-2:#25634B; --bar-3:#2B9A70; --bar-4:#4FD69C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E0F14; --surface:#15171E; --soft:#1A1D25; --line:#2A2D37; --line-strong:#3A3E4A;
+  --fg:#F2F3F5; --fg2:#CDCFD6; --muted:#A0A3AF; --faint:#7D808C;
+  --accent:#2FCB95; --accent-ink:#5ADBAA; --accent-soft:#132A22; --accent-line:#21513F;
+  --card:#07080B; --card-fg:#FAFAFA; --card-muted:#A9AAB8; --card-line:#262833; --card-soft:#14161D; --card-accent:#4FD69C;
+  --warn:#F0B55C; --warn-soft:#2A2113; --warn-line:#5A4422;
+  --bar-1:#1F3D32; --bar-2:#25634B; --bar-3:#2B9A70; --bar-4:#4FD69C; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-block:48px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:8px}
+.eyebrow{margin:0;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--accent-ink)}
+h1{margin:0;font-size:clamp(26px,4vw,36px);line-height:1.15;font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lede{margin:0;max-width:62ch;color:var(--muted);font-size:15px}
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:stretch}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:20px;min-width:0}
+.field{display:flex;flex-direction:column;gap:8px}
+.label{font-size:13px;font-weight:600;color:var(--fg2)}
+.note{margin:0;font-size:12px;color:var(--muted)}
+select,input[type=text],input[type=number]{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--fg);font:inherit;font-size:14px;font-weight:600}
+select:focus-visible,input:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.areas{display:flex;flex-wrap:wrap;gap:6px}
+.area{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--fg2);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.area[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+.area[aria-pressed="true"]::before{content:"✓ "}
+tr.pick{cursor:pointer}
+tr.pick:hover td{background:var(--soft)}
+tr.on td{background:var(--accent-soft);font-weight:700}
+.opt{min-height:44px;padding:0 8px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+.row2{display:grid;grid-template-columns:110px 1fr;gap:8px}
+.budget{margin:0;font-size:clamp(38px,5.5vw,50px);line-height:1.05;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:999px;margin:6px 0;cursor:pointer;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--surface);border:3px solid var(--accent);cursor:grab}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--accent);cursor:grab}
+.ends{display:flex;justify-content:space-between;font-size:12px;color:var(--faint)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+
+.result{background:var(--card);color:var(--card-fg);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.result h2{margin:0;font-size:13px;font-weight:600;color:var(--card-muted)}
+.big{margin:0;font-size:clamp(40px,6vw,52px);line-height:1;font-weight:800;letter-spacing:-.03em;color:var(--card-accent);font-variant-numeric:tabular-nums}
+.big-sub{margin:4px 0 0;font-size:15px;font-weight:600}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:var(--card-soft);border:1px solid var(--card-line);font-size:12px;font-weight:600}
+.kv{border:1px solid var(--card-line);border-radius:10px;overflow:hidden}
+.kv div{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;font-size:13px;border-bottom:1px solid var(--card-line)}
+.kv div:last-child{border-bottom:0}
+.kv span:first-child{color:var(--card-muted)}
+.kv b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cap{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid var(--card-line)}
+.cap-head{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.cap-head span{color:var(--card-muted)}
+.meter{position:relative;height:8px;border-radius:999px;background:var(--card-soft);border:1px solid var(--card-line);overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--card-accent);border-radius:999px}
+.meter.over i{background:#F0B55C}
+.cap p{margin:0;font-size:12px;color:var(--card-muted)}
+.disc{margin:0;font-size:12px;color:var(--card-muted)}
+
+.alert{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--fg2);font-size:13px}
+.alert b{color:var(--warn)}
+.alert button{margin-left:auto;flex:none;min-height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--warn-line);background:var(--surface);color:var(--fg);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+
+.funnel{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.funnel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.step{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:0}
+.step .t{font-size:12px;font-weight:600;color:var(--muted)}
+.step .n{font-size:22px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.15}
+.step .d{font-size:12px;color:var(--faint)}
+.step .bar{height:6px;border-radius:999px;background:var(--soft);overflow:hidden}
+.step .bar i{display:block;height:100%;border-radius:999px}
+
+section.block{display:flex;flex-direction:column;gap:12px}
+section.block h3{margin:0;font-size:17px;font-weight:700}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;font-weight:600;color:var(--muted);background:var(--soft)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.vbar{display:inline-block;height:6px;border-radius:999px;background:var(--bar-3);vertical-align:middle;margin-right:8px}
+
+details{border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:14px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary span{font-weight:500;color:var(--muted);font-size:12px}
+.prem{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:0 16px 16px}
+@media (max-width:720px){.prem{grid-template-columns:1fr}}
+.prem .field .note{min-height:0}
+.prem-actions{padding:0 16px 16px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{min-height:38px;padding:0 14px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.method{margin:0;font-size:12px;line-height:1.65;color:var(--muted);max-width:90ch}
+.method b{color:var(--fg2)}
+.loading{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">JUSFY ADS · CALCULADORA</p>
+    <h1>Quantas pessoas buscam a sua área <span>e quantas conversas isso rende</span></h1>
+    <p class="lede">Volume de buscas do Planejador de Palavras-chave do Google por área e região, com custo por clique e taxa de contato das campanhas reais da Jusfy Agency.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel" aria-label="Simulação">
+      <div class="field">
+        <span class="label" id="area-l">Áreas de atuação</span>
+        <div class="areas" id="areas" role="group" aria-labelledby="area-l"></div>
+        <p class="note" id="area-note">Escolha uma ou mais áreas.</p>
+      </div>
+
+      <div class="field">
+        <span class="label" id="esc-l">Onde anunciar</span>
+        <div class="seg" role="group" aria-labelledby="esc-l">
+          <button type="button" class="opt" data-esc="e" aria-pressed="true">Estado</button>
+          <button type="button" class="opt" data-esc="p" aria-pressed="false">Brasil todo</button>
+        </div>
+        <select id="uf" aria-label="Estado"></select>
+        <p class="note" id="geo-note"></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="verba">Investimento mensal em anúncios</label>
+        <p class="budget" id="verba-txt">R$ 1.500</p>
+        <input id="verba" type="range" min="1000" max="30000" step="500" value="1500">
+        <div class="ends"><span>R$ 1.000 · mínimo</span><span>R$ 30.000</span></div>
+        <div class="chips" id="chips"></div>
+      </div>
+    </section>
+
+    <section class="result" aria-live="polite">
+      <div>
+        <h2>O que esperar por mês*</h2>
+        <p class="big" id="leads">–</p>
+        <p class="big-sub">conversas com potenciais clientes</p>
+      </div>
+      <div class="pills"><span class="pill" id="p-sem">–</span><span class="pill" id="p-cpl">–</span></div>
+      <div class="kv">
+        <div><span>Custo por clique estimado</span><b id="k-cpc">–</b></div>
+        <div><span>Visitas à página</span><b id="k-cliques">–</b></div>
+        <div><span>Vezes que o anúncio aparece</span><b id="k-imp">–</b></div>
+      </div>
+      <div class="cap">
+        <div class="cap-head"><span>Investimento que a região absorve</span><b id="cap-txt">–</b></div>
+        <div class="meter" id="meter"><i id="meter-i" style="width:0%"></i></div>
+        <p id="cap-note">–</p>
+      </div>
+      <p class="disc">*Estimativa, não é garantia de resultado. Varia com a concorrência, a página e o tempo de resposta do escritório. Nas primeiras semanas o Google ainda ajusta a campanha.</p>
+    </section>
+  </div>
+
+  <div class="alert" id="alert" hidden><div id="alert-txt"></div><button type="button" id="alert-btn">Ampliar</button></div>
+
+  <section class="block" aria-label="Funil">
+    <h3 id="funil-t">Do volume de busca à conversa</h3>
+    <div class="funnel">
+      <div class="step"><span class="t">Buscas por mês na região</span><span class="n" id="f1">–</span><div class="bar"><i id="b1" style="background:var(--bar-1)"></i></div><span class="d" id="f1d">termos “advogado + área” (Planejador)</span></div>
+      <div class="step"><span class="t">Anúncios exibidos</span><span class="n" id="f2">–</span><div class="bar"><i id="b2" style="background:var(--bar-2)"></i></div><span class="d" id="f2d">–</span></div>
+      <div class="step"><span class="t">Cliques</span><span class="n" id="f3">–</span><div class="bar"><i id="b3" style="background:var(--bar-3)"></i></div><span class="d" id="f3d">–</span></div>
+      <div class="step"><span class="t">Conversas no WhatsApp</span><span class="n" id="f4">–</span><div class="bar"><i id="b4" style="background:var(--bar-4)"></i></div><span class="d" id="f4d">–</span></div>
+    </div>
+  </section>
+
+  <section class="block" aria-label="Divisão por área" id="split-box">
+    <h3 id="split-t">Como a verba se divide entre as áreas</h3>
+    <p class="note">Cada área vira uma campanha e uma página próprias. A verba é dividida conforme a procura de cada área; o que uma área não comporta passa para as outras.</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Área</th><th class="num">Buscas/mês</th><th class="num">Parte da verba</th><th class="num">CPC estimado</th><th class="num">Conversas/mês</th></tr></thead>
+      <tbody id="split-body"></tbody>
+    </table></div>
+  </section>
+
+  <section class="block" aria-label="Buscas da área">
+    <h3 id="kw-t">Principais buscas da área</h3>
+    <p class="note" id="kw-note"></p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Busca</th><th>Área</th><th class="num">Buscas/mês</th><th class="num">Lance topo da página (Planejador)</th></tr></thead>
+      <tbody id="kw-body"><tr><td class="loading" colspan="4">Carregando dados…</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section class="block" aria-label="Comparar áreas">
+    <h3 id="cmp-t">Todas as áreas nesta região</h3>
+    <p class="note">Cada linha simula a verba inteira numa área só. Clique numa área para incluir ou tirar da simulação.</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Área</th><th class="num">Buscas/mês</th><th class="num">CPC estimado</th><th class="num">Conversas com o investimento</th><th class="num">Investimento que absorve</th></tr></thead>
+      <tbody id="cmp-body"></tbody>
+    </table></div>
+  </section>
+
+  <details id="prem-box">
+    <summary>Premissas do cálculo <span id="prem-src">calibradas com campanhas reais</span></summary>
+    <div class="prem">
+      <div class="field"><label class="label" for="p-ctr">Taxa de clique (CTR), %</label><input id="p-ctr" type="number" step="0.5" min="1" max="40"><p class="note" id="n-ctr"></p></div>
+      <div class="field"><label class="label" for="p-cvl">Clique que vira conversa, cenário baixo, %</label><input id="p-cvl" type="number" step="0.5" min="0.5" max="50"><p class="note" id="n-cv"></p></div>
+      <div class="field"><label class="label" for="p-cvh">Clique que vira conversa, cenário alto, %</label><input id="p-cvh" type="number" step="0.5" min="0.5" max="50"><p class="note">Varia com a página e a área.</p></div>
+      <div class="field"><label class="label" for="p-cpc">CPC médio da Jusfy Ads, R$</label><input id="p-cpc" type="number" step="0.1" min="0.5" max="30"><p class="note" id="n-cpc"></p></div>
+      <div class="field"><label class="label" for="p-alc">Anúncios possíveis por busca principal</label><input id="p-alc" type="number" step="5" min="1" max="1000"><p class="note" id="n-alc"></p></div>
+      <div class="field"><label class="label" for="p-is">Parcela máxima das buscas que dá para cobrir, %</label><input id="p-is" type="number" step="5" min="10" max="100"><p class="note" id="n-is"></p></div>
+    </div>
+    <div class="prem-actions"><button type="button" class="btn" id="reset">Voltar às premissas calibradas</button></div>
+  </details>
+
+  <p class="method" id="method"></p>
+</div>
+
+<script>
+(function(){
+  var D = null, A = [], ST = {}, BR = null, C = {};
+  var S = { areas: ['trabalhista'], esc: 'e', uf: 'SP', verba: 1500 };
+  var P = {}, P0 = {};
+  var nf = new Intl.NumberFormat('pt-BR');
+  var $ = function(id){ return document.getElementById(id); };
+  function brl(v, d){ return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: d||0, maximumFractionDigits: d||0 }); }
+  function rnd(v){ if (v >= 10000) return Math.round(v/1000)*1000; if (v >= 1000) return Math.round(v/100)*100; if (v >= 100) return Math.round(v/10)*10; return Math.round(v); }
+  function rng(a, b){ a = rnd(a); b = rnd(b); return a === b ? nf.format(a) : nf.format(a) + ' a ' + nf.format(b); }
+  function r1(v){ return Math.round(v*10)/10; }
+  function fmtDate(s){ var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+  function low(s){ return s.charAt(0).toLowerCase() + s.slice(1); }
+  function lista(n){ return n.length < 2 ? n.join('') : n.slice(0, -1).join(', ') + ' e ' + n[n.length-1]; }
+  var UFN = {AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
+
+  fetch('dados.json').then(function(r){ return r.json(); }).then(init).catch(function(){
+    $('kw-body').innerHTML = '<tr><td colspan="4">Não foi possível carregar os dados. Recarregue a página.</td></tr>';
+  });
+
+  function init(d){
+    D = d; A = d.meta.areas;
+    d.locais.forEach(function(l){ if (l.t === 'e') ST[l.uf] = l; if (l.t === 'p') BR = l; });
+    var c = d.meta.calibracao;
+    C = c;
+    P0 = { ctr: r1(c.ctr*100), cvl: 4.5, cvh: 6.5, cpc: c.cpc, alc: c.fator_alcance || 100, is: 80 };
+    P = Object.assign({}, P0);
+    $('areas').innerHTML = A.map(function(a){ return '<button type="button" class="area" data-a="'+a.id+'" aria-pressed="false">'+a.nome+'</button>'; }).join('');
+    $('uf').innerHTML = Object.keys(UFN).sort().map(function(u){ return '<option value="'+u+'">'+u+' · '+UFN[u]+'</option>'; }).join('');
+    $('chips').innerHTML = [1000,1500,2000,3000,5000,10000].map(function(v){ return '<button type="button" class="chip" data-v="'+v+'">'+brl(v)+'</button>'; }).join('');
+    $('n-ctr').textContent = 'Campanhas da Agency: ' + r1(c.ctr*100) + '%.';
+    $('n-cv').textContent = 'Jusfy Ads hoje: ' + String(r1(c.tx_contato*100)).replace('.', ',') + '% na média, ' + brl(c.custo_contato) + ' por conversa.';
+    $('n-cpc').textContent = 'Média real da Jusfy Ads (' + c.campanhas + ' campanhas). Cada área e estado varia em torno dela conforme o Planejador, com piso de ' + brl(c.cpc_piso, 2) + '.';
+    $('n-alc').textContent = 'Inclui variações e termos do tipo de caso (correspondência ampla). Mediana das ' + c.n_alcance + ' campanhas da Agency com 100+ cliques: ' + c.fator_alcance + '.';
+    $('n-is').textContent = 'Com lance alto o bastante. Hoje as contas cobrem ' + Math.round(c.is_mediana*100) + '% (teto de CPC baixo).';
+    $('prem-src').textContent = 'calibradas com ' + c.campanhas + ' campanhas da Jusfy Ads';
+    $('method').innerHTML = '<b>Como calculamos.</b> Buscas por mês: soma da média mensal dos últimos 12 meses no Planejador de Palavras-chave do Google para os principais termos “advogado + área” de quem pesquisa no estado ou no Brasil (consulta de ' + fmtDate(d.meta.gerado_em) + '). Anúncios exibidos: buscas × anúncios possíveis por busca × parcela coberta. O custo por clique parte da média real da Jusfy Ads (' + brl(c.cpc, 2) + '), ajustada pela diferença de preço de cada área e estado no Planejador, com piso de ' + brl(c.cpc_piso, 2) + ', e sobe conforme a verba se aproxima do que a região comporta, porque as buscas mais baratas são usadas primeiro. Com várias áreas, a verba é dividida conforme a procura de cada uma. Conversas: cliques × taxa de contato pelo WhatsApp. Base real: ' + c.campanhas + ' campanhas, ' + nf.format(c.cliques) + ' cliques, ' + nf.format(c.contatos) + ' conversas e custo médio de ' + brl(c.custo_contato) + ' por conversa.';
+    load(); bind(); render();
+  }
+  function load(){ try { var s = JSON.parse(localStorage.getItem('jads-calc-v2')||'null'); if (s) { Object.assign(S, s.S||{}); Object.assign(P, s.P||{}); } } catch(e){}
+    S.areas = (S.areas||[]).filter(function(id){ return A.some(function(a){ return a.id === id; }); });
+    if (!S.areas.length) S.areas = ['trabalhista']; if (S.esc !== 'p') S.esc = 'e'; if (!UFN[S.uf]) S.uf = 'SP'; }
+  function save(){ try { localStorage.setItem('jads-calc-v2', JSON.stringify({S:S,P:P})); } catch(e){} }
+
+  function toggle(id){
+    var k = S.areas.indexOf(id);
+    if (k >= 0) { if (S.areas.length > 1) S.areas.splice(k, 1); } else S.areas.push(id);
+    render();
+  }
+  function bind(){
+    $('areas').addEventListener('click', function(e){ var b = e.target.closest('.area'); if (b) toggle(b.dataset.a); });
+    $('cmp-body').addEventListener('click', function(e){ var r = e.target.closest('tr[data-a]'); if (r) toggle(r.dataset.a); });
+    $('cmp-body').addEventListener('keydown', function(e){ var r = e.target.closest('tr[data-a]'); if (r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(r.dataset.a); } });
+    document.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click', function(){ S.esc = b.dataset.esc; render(); }); });
+    $('uf').addEventListener('change', function(e){ S.uf = e.target.value; render(); });
+    $('verba').addEventListener('input', function(e){ S.verba = +e.target.value; render(); });
+    $('chips').addEventListener('click', function(e){ var b = e.target.closest('.chip'); if (b) { S.verba = +b.dataset.v; render(); } });
+    ['ctr','cvl','cvh','cpc','alc','is'].forEach(function(k){ $('p-'+k).addEventListener('input', function(e){ var v = parseFloat(e.target.value); if (isFinite(v) && v > 0) { P[k] = v; render(); } }); });
+    $('reset').addEventListener('click', function(){ P = Object.assign({}, P0); render(); });
+    $('alert-btn').addEventListener('click', function(){ S.esc = 'p'; render(); });
+  }
+  function syncInputs(){
+    $('uf').value = S.uf; $('verba').value = S.verba;
+    ['ctr','cvl','cvh','cpc','alc','is'].forEach(function(k){ if (document.activeElement !== $('p-'+k)) $('p-'+k).value = P[k]; });
+  }
+
+  // Modelo por área: CPC sobe do piso ao topo conforme o uso do teto de cliques da região.
+  // cliques c resolvem c * (a + b*c/T) = verba, limitados a T.
+  // CPC base: média real da Jusfy Ads × (quanto esta área/estado é mais cara que a referência no Planejador), suavizado e com piso.
+  function cpcBase(l, i){
+    var idx = l.l[i] && C.cpc_ref_planejador ? Math.sqrt(l.l[i] / C.cpc_ref_planejador) : 1;
+    return Math.max(C.cpc_piso || 0, P.cpc * idx);
+  }
+  function simular(l, i, verba, cpcMult, cv){
+    var buscas = l.v[i], alc = buscas * P.alc, T = alc * (P.is/100) * (P.ctr/100);
+    var a = cpcBase(l, i) * cpcMult, top = a * 1.6, b = top - a;
+    if (T <= 0 || a <= 0 || verba <= 0) return { buscas: buscas, T: T > 0 ? T : 0, cliques: 0, gasto: 0, cpc: a > 0 ? a : 0, leads: 0, teto: T > 0 && a > 0 ? T * top : 0, imp: 0, alc: alc };
+    var k = b / T, c = k > 0 ? (-a + Math.sqrt(a*a + 4*k*verba)) / (2*k) : verba / a;
+    c = Math.min(c, T);
+    var cpc = a + b * c / T;
+    return { buscas: buscas, T: T, cliques: c, gasto: c * cpc, cpc: cpc, leads: c * cv / 100, teto: T * top, imp: c / (P.ctr/100), alc: alc };
+  }
+  // Divide a verba pela procura de cada área; o que passa do teto de uma área vai para as outras.
+  function dividir(l, idx, verba){
+    var teto = idx.map(function(i){ return simular(l, i, 1, 1, 0).teto; });
+    var parte = idx.map(function(){ return 0; }), livres = idx.map(function(_, k){ return teto[k] > 0; }), resto = verba;
+    for (var it = 0; it < idx.length && resto > 0.5; it++) {
+      var soma = 0; idx.forEach(function(i, k){ if (livres[k]) soma += l.v[i]; });
+      if (soma <= 0) break;
+      var sobra = 0;
+      idx.forEach(function(i, k){ if (!livres[k]) return;
+        var add = resto * l.v[i] / soma;
+        if (parte[k] + add >= teto[k]) { sobra += parte[k] + add - teto[k]; parte[k] = teto[k]; livres[k] = false; } else parte[k] += add; });
+      resto = sobra;
+    }
+    return parte;
+  }
+
+  function render(){
+    if (!D) return;
+    save(); syncInputs();
+    document.querySelectorAll('.area').forEach(function(b){ b.setAttribute('aria-pressed', String(S.areas.indexOf(b.dataset.a) >= 0)); });
+    document.querySelectorAll('.opt').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.esc === S.esc)); });
+    $('uf').hidden = S.esc === 'p';
+    $('verba-txt').textContent = brl(S.verba);
+    var pct = (S.verba - 1000) / (30000 - 1000) * 100;
+    $('verba').style.background = 'linear-gradient(to right, var(--accent) 0%, var(--accent) '+pct+'%, var(--line) '+pct+'%, var(--line) 100%)';
+    document.querySelectorAll('.chip').forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.v === S.verba)); });
+
+    var l = S.esc === 'p' ? BR : ST[S.uf], nome = S.esc === 'p' ? 'Brasil' : UFN[S.uf];
+    var idx = S.areas.map(function(id){ return A.findIndex(function(a){ return a.id === id; }); }).sort(function(x, y){ return l.v[y] - l.v[x]; });
+    var nomes = idx.map(function(i){ return A[i].nome; });
+    var rotulo = idx.length === 1 ? nomes[0] : idx.length + ' áreas';
+    $('area-note').textContent = idx.length === 1 ? 'Escolha uma ou mais áreas.' : nomes.length + ' áreas: ' + lista(nomes) + '. Cada uma vira uma campanha.';
+    $('geo-note').textContent = S.esc === 'p' ? 'Anúncios para o país inteiro. Faz sentido para quem atende online.' : 'Quem pesquisa em todo o estado.';
+
+    var partes = dividir(l, idx, S.verba);
+    var por = idx.map(function(i, k){ return { i: i, verba: partes[k], lo: simular(l, i, partes[k], 1.1, P.cvl), hi: simular(l, i, partes[k], 0.9, P.cvh) }; });
+    var tot = function(c, f){ return por.reduce(function(s, x){ return s + x[c][f]; }, 0); };
+    var lo = { leads: tot('lo','leads'), gasto: tot('lo','gasto'), cliques: tot('lo','cliques'), imp: tot('lo','imp'), teto: tot('lo','teto'), buscas: tot('lo','buscas'), alc: tot('lo','alc') };
+    var hi = { leads: tot('hi','leads'), gasto: tot('hi','gasto'), cliques: tot('hi','cliques'), imp: tot('hi','imp'), teto: tot('hi','teto'), alc: tot('hi','alc') };
+    lo.cpc = lo.cliques ? lo.gasto / lo.cliques : 0; hi.cpc = hi.cliques ? hi.gasto / hi.cliques : 0;
+
+    var leadsLo = Math.max(0, Math.floor(lo.leads)), leadsHi = Math.max(leadsLo + 1, Math.round(hi.leads));
+    $('leads').textContent = lo.cliques ? leadsLo + ' a ' + leadsHi : '–';
+    var wl = lo.leads*7/30, wh = hi.leads*7/30;
+    $('p-sem').textContent = wh < 1 ? '1 conversa a cada ' + Math.max(1, Math.round(30/Math.max(hi.leads,0.01))) + ' a ' + Math.round(30/Math.max(lo.leads,0.01)) + ' dias' : Math.round(wl) + ' a ' + Math.round(wh) + ' por semana';
+    var cplLo = hi.leads ? hi.gasto / hi.leads : 0, cplHi = lo.leads ? lo.gasto / lo.leads : 0;
+    $('p-cpl').textContent = 'Custo por conversa: ' + brl(Math.round(cplLo)) + ' a ' + brl(Math.round(cplHi));
+    $('k-cpc').textContent = brl(hi.cpc, 2) + ' a ' + brl(lo.cpc, 2);
+    $('k-cliques').textContent = rng(lo.cliques, hi.cliques);
+    $('k-imp').textContent = rng(lo.imp, hi.imp);
+
+    var teto = (lo.teto + hi.teto) / 2;
+    var uso = teto ? Math.min(100, S.verba / teto * 100) : 100;
+    $('cap-txt').textContent = 'até ~' + brl(rnd(teto));
+    $('meter-i').style.width = uso + '%';
+    $('meter').classList.toggle('over', S.verba > teto);
+    var sobra = Math.max(0, S.verba - (lo.gasto + hi.gasto)/2);
+    var oque = idx.length === 1 ? low(nomes[0]) : 'nessas ' + idx.length + ' áreas';
+    $('cap-note').textContent = S.verba > teto
+      ? 'Com ' + brl(S.verba) + ', cerca de ' + brl(rnd(sobra)) + ' ficariam sem uso: não há buscas suficientes ' + (idx.length === 1 ? 'de ' : '') + oque + ' em ' + nome + '.'
+      : 'Você usaria ' + Math.max(1, Math.round(uso)) + '% do que ' + nome + ' comporta ' + (idx.length === 1 ? 'em ' : '') + oque + '.';
+
+    var alertOn = S.verba > teto;
+    $('alert').hidden = !alertOn;
+    if (alertOn) {
+      $('alert-txt').innerHTML = '<b>A região não comporta esse investimento.</b> Acima de ~' + brl(rnd(teto)) + ' por mês a verba não gera mais cliques em ' + nome + '. Para usar ' + brl(S.verba) + ', ' + (S.esc === 'e' ? 'amplie para o Brasil todo ou inclua outra área.' : 'inclua outra área.');
+      $('alert-btn').hidden = S.esc === 'p';
+    }
+
+    // Funil
+    var mx = hi.alc || 1;
+    $('funil-t').textContent = rotulo + ' em ' + nome + ' com ' + brl(S.verba) + ' por mês';
+    $('f1').textContent = nf.format(lo.buscas);
+    $('f1d').textContent = 'termos “advogado + área” (Planejador)';
+    $('f2').textContent = rng(lo.imp, hi.imp); $('f2d').textContent = 'de até ' + nf.format(rnd(hi.alc)) + ' possíveis';
+    $('f3').textContent = rng(lo.cliques, hi.cliques); $('f3d').textContent = 'CTR de ' + r1(P.ctr) + '%';
+    $('f4').textContent = leadsLo + ' a ' + leadsHi; $('f4d').textContent = r1(P.cvl) + '% a ' + r1(P.cvh) + '% dos cliques';
+    $('b1').style.width = Math.min(100, lo.buscas / mx * 100) + '%';
+    $('b2').style.width = Math.min(100, hi.imp / mx * 100) + '%';
+    $('b3').style.width = Math.max(2, Math.min(100, hi.cliques / mx * 100 * 5)) + '%';
+    $('b4').style.width = Math.max(2, Math.min(100, hi.leads / mx * 100 * 50)) + '%';
+
+    // Divisão por área
+    $('split-box').hidden = idx.length < 2;
+    $('split-t').textContent = 'Como ' + brl(S.verba) + ' se divide entre as ' + idx.length + ' áreas em ' + nome;
+    $('split-body').innerHTML = por.map(function(x){
+      var cpc = (x.lo.cpc + x.hi.cpc) / 2, a = Math.floor(x.lo.leads), b = Math.max(a + 1, Math.round(x.hi.leads));
+      var cheio = x.verba > 0 && x.verba >= x.lo.teto * 0.99 ? ' <span style="color:var(--warn)">(no limite)</span>' : '';
+      return '<tr><td>' + A[x.i].nome + '</td><td class="num">' + nf.format(l.v[x.i]) + '</td><td class="num">' + brl(rnd(x.verba)) + ' · ' + Math.round(x.verba / S.verba * 100) + '%' + cheio + '</td><td class="num">' + (cpc ? brl(cpc, 2) : '–') + '</td><td class="num">' + (x.verba > 0 ? a + ' a ' + b : '–') + '</td></tr>';
+    }).join('');
+
+    // Buscas das áreas escolhidas
+    var det = D.detalhe[l.id] || {};
+    var rows = [];
+    idx.forEach(function(i){ A[i].kws.forEach(function(k){ var m = det[k] || [0,0,0]; rows.push({ k: k, a: A[i].nome, v: m[0], lo: m[1], hi: m[2] }); }); });
+    rows.sort(function(x, y){ return y.v - x.v; });
+    if (idx.length > 1) rows = rows.slice(0, 15);
+    var vmax = rows.length ? Math.max(1, rows[0].v) : 1;
+    $('kw-t').textContent = (idx.length === 1 ? 'Principais buscas de ' + low(nomes[0]) : 'As 15 buscas com mais volume nas áreas escolhidas') + ' em ' + nome;
+    $('kw-note').textContent = 'O lance de topo da página é a faixa que o Planejador indica para aparecer no alto. As campanhas da Jusfy Ads pagam bem menos: ' + brl(C.cpc, 2) + ' por clique na média.';
+    $('kw-body').innerHTML = rows.map(function(r){
+      return '<tr><td>' + r.k + '</td><td>' + r.a + '</td><td class="num"><span class="vbar" style="width:' + Math.round(r.v / vmax * 80) + 'px"></span>' + (r.v ? nf.format(r.v) : '<span style="color:var(--faint)">sem dado</span>') + '</td><td class="num">' + (r.lo ? brl(r.lo,2) + ' a ' + brl(r.hi,2) : '–') + '</td></tr>';
+    }).join('');
+
+    // Comparativo de áreas (verba inteira em cada uma)
+    $('cmp-t').textContent = 'Todas as áreas em ' + nome + ' com ' + brl(S.verba);
+    var cmp = A.map(function(a, j){
+      var x = simular(l, j, S.verba, 1.1, P.cvl), y = simular(l, j, S.verba, 0.9, P.cvh);
+      return { a: a, b: l.v[j], cpc: (x.cpc + y.cpc)/2, lo: Math.floor(x.leads), hi: Math.round(y.leads), teto: (x.teto + y.teto)/2 };
+    }).sort(function(p, q){ return q.b - p.b; });
+    $('cmp-body').innerHTML = cmp.map(function(r){
+      var on = S.areas.indexOf(r.a.id) >= 0;
+      var lim = r.teto && S.verba > r.teto ? ' <span style="color:var(--warn)" title="Não comporta a verba inteira">●</span>' : '';
+      return '<tr class="pick' + (on ? ' on' : '') + '" data-a="' + r.a.id + '" tabindex="0" aria-pressed="' + on + '"><td>' + (on ? '✓ ' : '') + r.a.nome + '</td><td class="num">' + nf.format(r.b) + '</td><td class="num">' + (r.cpc ? brl(r.cpc, 2) : '–') + '</td><td class="num">' + (r.teto ? r.lo + ' a ' + Math.max(r.hi, r.lo + 1) : '–') + '</td><td class="num">' + (r.teto ? '~' + brl(rnd(r.teto)) + lim : '–') + '</td></tr>';
+    }).join('');
+  }
+})();
+</script>
+
+</body>
+</html>

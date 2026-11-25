@@ -1,0 +1,11 @@
+﻿# Dados brutos e de clientes: ficam sÃ³ na mÃ¡quina
+raw.jsonl
+bench.json
+calibracao_local.json
+geos_raw.json
+fetch.log
+/dados.json
+__pycache__/
+.env
+rodar.ps1
+bench_hist.json
