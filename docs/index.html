@@ -394,8 +394,8 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     $('f1').textContent = nf.format(lo.buscas);
     $('f1d').textContent = 'termos “advogado + área” (Planejador)';
     $('f2').textContent = rng(lo.imp, hi.imp); $('f2d').textContent = 'de até ' + nf.format(rnd(hi.alc)) + ' possíveis';
-    $('f3').textContent = rng(lo.cliques, hi.cliques); $('f3d').textContent = 'CTR de ' + r1(P.ctr) + '%';
-    $('f4').textContent = leadsLo + ' a ' + leadsHi; $('f4d').textContent = r1(P.cvl) + '% a ' + r1(P.cvh) + '% dos cliques';
+    $('f3').textContent = rng(lo.cliques, hi.cliques); $('f3d').textContent = 'CTR de ' + String(r1(P.ctr)).replace('.', ',') + '%';
+    $('f4').textContent = leadsLo + ' a ' + leadsHi; $('f4d').textContent = String(r1(P.cvl)).replace('.', ',') + '% a ' + String(r1(P.cvh)).replace('.', ',') + '% das visitas';
     $('b1').style.width = Math.min(100, lo.buscas / mx * 100) + '%';
     $('b2').style.width = Math.min(100, hi.imp / mx * 100) + '%';
     $('b3').style.width = Math.max(2, Math.min(100, hi.cliques / mx * 100 * 5)) + '%';
