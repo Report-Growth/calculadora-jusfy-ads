@@ -91,8 +91,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .alert b{color:var(--warn)}
 .alert button{margin-left:auto;flex:none;min-height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--warn-line);background:var(--surface);color:var(--fg);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
 
-.funnel{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-@media (max-width:720px){.funnel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.funnel{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.funnel{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.funnel{grid-template-columns:1fr}}
 .step{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:0}
 .step .t{font-size:12px;font-weight:600;color:var(--muted)}
 .step .n{font-size:22px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.15}
@@ -130,7 +131,7 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
 <div class="wrap">
   <header>
     <p class="eyebrow">JUSFY ADS · CALCULADORA</p>
-    <h1>Quantas pessoas buscam a sua área <span>e quantos cliques de contato no WhatsApp isso rende</span></h1>
+    <h1>Quantas pessoas buscam a sua área <span>e quantas conversas no WhatsApp isso rende</span></h1>
     <p class="lede">Volume de buscas do Planejador de Palavras-chave do Google por área e região, com custo por clique e taxa de contato das campanhas reais da Jusfy Agency.</p>
   </header>
 
@@ -165,10 +166,11 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
       <div>
         <h2>O que esperar por mês*</h2>
         <p class="big" id="leads">–</p>
-        <p class="big-sub">cliques de contato no WhatsApp</p>
+        <p class="big-sub">conversas iniciadas no WhatsApp</p>
       </div>
       <div class="pills"><span class="pill" id="p-sem">–</span><span class="pill" id="p-cpl">–</span></div>
       <div class="kv">
+        <div><span>Cliques no botão do WhatsApp</span><b id="k-wa">–</b></div>
         <div><span>Custo por clique estimado</span><b id="k-cpc">–</b></div>
         <div><span>Visitas à página</span><b id="k-cliques">–</b></div>
         <div><span>Vezes que o anúncio aparece</span><b id="k-imp">–</b></div>
@@ -185,12 +187,13 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
   <div class="alert" id="alert" hidden><div id="alert-txt"></div><button type="button" id="alert-btn">Ampliar</button></div>
 
   <section class="block" aria-label="Funil">
-    <h3 id="funil-t">Do volume de busca ao clique no WhatsApp</h3>
+    <h3 id="funil-t">Do volume de busca à conversa</h3>
     <div class="funnel">
       <div class="step"><span class="t">Buscas por mês na região</span><span class="n" id="f1">–</span><div class="bar"><i id="b1" style="background:var(--bar-1)"></i></div><span class="d" id="f1d">termos “advogado + área” (Planejador)</span></div>
       <div class="step"><span class="t">Anúncios exibidos</span><span class="n" id="f2">–</span><div class="bar"><i id="b2" style="background:var(--bar-2)"></i></div><span class="d" id="f2d">–</span></div>
       <div class="step"><span class="t">Visitas à página</span><span class="n" id="f3">–</span><div class="bar"><i id="b3" style="background:var(--bar-3)"></i></div><span class="d" id="f3d">–</span></div>
-      <div class="step"><span class="t">Cliques de contato no WhatsApp</span><span class="n" id="f4">–</span><div class="bar"><i id="b4" style="background:var(--bar-4)"></i></div><span class="d" id="f4d">–</span></div>
+      <div class="step"><span class="t">Cliques no WhatsApp</span><span class="n" id="f4">–</span><div class="bar"><i id="b4" style="background:var(--bar-3)"></i></div><span class="d" id="f4d">–</span></div>
+      <div class="step"><span class="t">Conversas iniciadas</span><span class="n" id="f5">–</span><div class="bar"><i id="b5" style="background:var(--bar-4)"></i></div><span class="d" id="f5d">–</span></div>
     </div>
   </section>
 
@@ -198,7 +201,7 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     <h3 id="split-t">Como a verba se divide entre as áreas</h3>
     <p class="note">Cada área vira uma campanha e uma página próprias. A verba é dividida conforme a procura de cada área; o que uma área não comporta passa para as outras.</p>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Área</th><th class="num">Buscas/mês</th><th class="num">Parte da verba</th><th class="num">CPC estimado</th><th class="num">Cliques no WhatsApp/mês</th></tr></thead>
+      <thead><tr><th>Área</th><th class="num">Buscas/mês</th><th class="num">Parte da verba</th><th class="num">CPC estimado</th><th class="num">Conversas/mês</th></tr></thead>
       <tbody id="split-body"></tbody>
     </table></div>
   </section>
@@ -216,7 +219,7 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     <h3 id="cmp-t">Todas as áreas nesta região</h3>
     <p class="note">Cada linha simula a verba inteira numa área só. Clique numa área para incluir ou tirar da simulação.</p>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Área</th><th class="num">Buscas/mês</th><th class="num">CPC estimado</th><th class="num">Cliques no WhatsApp com o investimento</th><th class="num">Investimento que absorve</th></tr></thead>
+      <thead><tr><th>Área</th><th class="num">Buscas/mês</th><th class="num">CPC estimado</th><th class="num">Conversas com o investimento</th><th class="num">Investimento que absorve</th></tr></thead>
       <tbody id="cmp-body"></tbody>
     </table></div>
   </section>
@@ -227,6 +230,7 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
       <div class="field"><label class="label" for="p-ctr">Taxa de clique (CTR), %</label><input id="p-ctr" type="number" step="0.5" min="1" max="40"><p class="note" id="n-ctr"></p></div>
       <div class="field"><label class="label" for="p-cvl">Visita que clica no WhatsApp, cenário baixo, %</label><input id="p-cvl" type="number" step="0.5" min="0.5" max="50"><p class="note" id="n-cv"></p></div>
       <div class="field"><label class="label" for="p-cvh">Visita que clica no WhatsApp, cenário alto, %</label><input id="p-cvh" type="number" step="0.5" min="0.5" max="50"><p class="note">Varia com a página e a área.</p></div>
+      <div class="field"><label class="label" for="p-perda">Perda entre o clique no WhatsApp e a mensagem, %</label><input id="p-perda" type="number" step="5" min="0" max="90"><p class="note">Quem clica no botão e não chega a mandar mensagem. Premissa de mercado (20% a 40%), ainda não medida na Jusfy Ads.</p></div>
       <div class="field"><label class="label" for="p-cpc">CPC médio da Jusfy Ads, R$</label><input id="p-cpc" type="number" step="0.1" min="0.5" max="30"><p class="note" id="n-cpc"></p></div>
       <div class="field"><label class="label" for="p-alc">Anúncios possíveis por busca principal</label><input id="p-alc" type="number" step="5" min="1" max="1000"><p class="note" id="n-alc"></p></div>
       <div class="field"><label class="label" for="p-is">Parcela máxima das buscas que dá para cobrir, %</label><input id="p-is" type="number" step="5" min="10" max="100"><p class="note" id="n-is"></p></div>
@@ -262,7 +266,7 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     d.locais.forEach(function(l){ if (l.t === 'e') ST[l.uf] = l; if (l.t === 'p') BR = l; });
     var c = d.meta.calibracao;
     C = c;
-    P0 = { ctr: r1(c.ctr*100), cvl: 4.5, cvh: 6.5, cpc: c.cpc, alc: c.fator_alcance || 100, is: 80 };
+    P0 = { ctr: r1(c.ctr*100), cvl: 4.5, cvh: 6.5, perda: 30, cpc: c.cpc, alc: c.fator_alcance || 100, is: 80 };
     P = Object.assign({}, P0);
     $('areas').innerHTML = A.map(function(a){ return '<button type="button" class="area" data-a="'+a.id+'" aria-pressed="false">'+a.nome+'</button>'; }).join('');
     $('uf').innerHTML = Object.keys(UFN).sort().map(function(u){ return '<option value="'+u+'">'+u+' · '+UFN[u]+'</option>'; }).join('');
@@ -273,7 +277,7 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     $('n-alc').textContent = 'Inclui variações e termos do tipo de caso (correspondência ampla). Mediana das ' + c.n_alcance + ' campanhas da Agency com 100+ cliques: ' + c.fator_alcance + '.';
     $('n-is').textContent = 'Com lance alto o bastante. Hoje as contas cobrem ' + Math.round(c.is_mediana*100) + '% (teto de CPC baixo).';
     $('prem-src').textContent = 'calibradas com ' + c.campanhas + ' campanhas da Jusfy Ads';
-    $('method').innerHTML = '<b>Como calculamos.</b> Buscas por mês: soma da média mensal dos últimos 12 meses no Planejador de Palavras-chave do Google para os principais termos “advogado + área” de quem pesquisa no estado ou no Brasil (consulta de ' + fmtDate(d.meta.gerado_em) + '). Anúncios exibidos: buscas × anúncios possíveis por busca × parcela coberta. O custo por clique parte da média real da Jusfy Ads (' + brl(c.cpc, 2) + '), ajustada pela diferença de preço de cada área e estado no Planejador, com piso de ' + brl(c.cpc_piso, 2) + ', e sobe conforme a verba se aproxima do que a região comporta, porque as buscas mais baratas são usadas primeiro. Com várias áreas, a verba é dividida conforme a procura de cada uma. Cliques de contato: visitas à página × parcela que clica no botão do WhatsApp. Base real: ' + c.campanhas + ' campanhas, ' + nf.format(c.cliques) + ' cliques, ' + nf.format(c.contatos) + ' cliques no WhatsApp e custo médio de ' + brl(c.custo_contato) + ' por clique no WhatsApp.';
+    $('method').innerHTML = '<b>Como calculamos.</b> Buscas por mês: soma da média mensal dos últimos 12 meses no Planejador de Palavras-chave do Google para os principais termos “advogado + área” de quem pesquisa no estado ou no Brasil (consulta de ' + fmtDate(d.meta.gerado_em) + '). Anúncios exibidos: buscas × anúncios possíveis por busca × parcela coberta. O custo por clique parte da média real da Jusfy Ads (' + brl(c.cpc, 2) + '), ajustada pela diferença de preço de cada área e estado no Planejador, com piso de ' + brl(c.cpc_piso, 2) + ', e sobe conforme a verba se aproxima do que a região comporta, porque as buscas mais baratas são usadas primeiro. Com várias áreas, a verba é dividida conforme a procura de cada uma. Cliques no WhatsApp: visitas à página × parcela que clica no botão do WhatsApp. Conversas: cliques no WhatsApp menos quem não chega a mandar mensagem (' + String(P.perda).replace('.', ',') + '% por padrão, premissa de mercado ainda não medida na Jusfy Ads). Base real: ' + c.campanhas + ' campanhas, ' + nf.format(c.cliques) + ' cliques, ' + nf.format(c.contatos) + ' cliques no WhatsApp e custo médio de ' + brl(c.custo_contato) + ' por clique no WhatsApp.';
     load(); bind(); render();
   }
   function load(){ try { var s = JSON.parse(localStorage.getItem('jads-calc-v2')||'null'); if (s) { Object.assign(S, s.S||{}); Object.assign(P, s.P||{}); } } catch(e){}
@@ -294,13 +298,13 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     $('uf').addEventListener('change', function(e){ S.uf = e.target.value; render(); });
     $('verba').addEventListener('input', function(e){ S.verba = +e.target.value; render(); });
     $('chips').addEventListener('click', function(e){ var b = e.target.closest('.chip'); if (b) { S.verba = +b.dataset.v; render(); } });
-    ['ctr','cvl','cvh','cpc','alc','is'].forEach(function(k){ $('p-'+k).addEventListener('input', function(e){ var v = parseFloat(e.target.value); if (isFinite(v) && v > 0) { P[k] = v; render(); } }); });
+    ['ctr','cvl','cvh','perda','cpc','alc','is'].forEach(function(k){ $('p-'+k).addEventListener('input', function(e){ var v = parseFloat(e.target.value); if (isFinite(v) && (v > 0 || (k === 'perda' && v === 0)) && !(k === 'perda' && v >= 100)) { P[k] = v; render(); } }); });
     $('reset').addEventListener('click', function(){ P = Object.assign({}, P0); render(); });
     $('alert-btn').addEventListener('click', function(){ S.esc = 'p'; render(); });
   }
   function syncInputs(){
     $('uf').value = S.uf; $('verba').value = S.verba;
-    ['ctr','cvl','cvh','cpc','alc','is'].forEach(function(k){ if (document.activeElement !== $('p-'+k)) $('p-'+k).value = P[k]; });
+    ['ctr','cvl','cvh','perda','cpc','alc','is'].forEach(function(k){ if (document.activeElement !== $('p-'+k)) $('p-'+k).value = P[k]; });
   }
 
   // Modelo por área: CPC sobe do piso ao topo conforme o uso do teto de cliques da região.
@@ -317,7 +321,9 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     var k = b / T, c = k > 0 ? (-a + Math.sqrt(a*a + 4*k*verba)) / (2*k) : verba / a;
     c = Math.min(c, T);
     var cpc = a + b * c / T;
-    return { buscas: buscas, T: T, cliques: c, gasto: c * cpc, cpc: cpc, leads: c * cv / 100, teto: T * top, imp: c / (P.ctr/100), alc: alc };
+    // wa = cliques no botão do WhatsApp; leads = conversas que de fato começam (wa − perda)
+    var wa = c * cv / 100;
+    return { buscas: buscas, T: T, cliques: c, gasto: c * cpc, cpc: cpc, wa: wa, leads: wa * (1 - P.perda/100), teto: T * top, imp: c / (P.ctr/100), alc: alc };
   }
   // Divide a verba pela procura de cada área; o que passa do teto de uma área vai para as outras.
   function dividir(l, idx, verba){
@@ -356,16 +362,18 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     var partes = dividir(l, idx, S.verba);
     var por = idx.map(function(i, k){ return { i: i, verba: partes[k], lo: simular(l, i, partes[k], 1.1, P.cvl), hi: simular(l, i, partes[k], 0.9, P.cvh) }; });
     var tot = function(c, f){ return por.reduce(function(s, x){ return s + x[c][f]; }, 0); };
-    var lo = { leads: tot('lo','leads'), gasto: tot('lo','gasto'), cliques: tot('lo','cliques'), imp: tot('lo','imp'), teto: tot('lo','teto'), buscas: tot('lo','buscas'), alc: tot('lo','alc') };
-    var hi = { leads: tot('hi','leads'), gasto: tot('hi','gasto'), cliques: tot('hi','cliques'), imp: tot('hi','imp'), teto: tot('hi','teto'), alc: tot('hi','alc') };
+    var lo = { wa: tot('lo','wa'), leads: tot('lo','leads'), gasto: tot('lo','gasto'), cliques: tot('lo','cliques'), imp: tot('lo','imp'), teto: tot('lo','teto'), buscas: tot('lo','buscas'), alc: tot('lo','alc') };
+    var hi = { wa: tot('hi','wa'), leads: tot('hi','leads'), gasto: tot('hi','gasto'), cliques: tot('hi','cliques'), imp: tot('hi','imp'), teto: tot('hi','teto'), alc: tot('hi','alc') };
     lo.cpc = lo.cliques ? lo.gasto / lo.cliques : 0; hi.cpc = hi.cliques ? hi.gasto / hi.cliques : 0;
 
     var leadsLo = Math.max(0, Math.floor(lo.leads)), leadsHi = Math.max(leadsLo + 1, Math.round(hi.leads));
     $('leads').textContent = lo.cliques ? leadsLo + ' a ' + leadsHi : '–';
     var wl = lo.leads*7/30, wh = hi.leads*7/30;
-    $('p-sem').textContent = wh < 1 ? '1 clique no WhatsApp a cada ' + Math.max(1, Math.round(30/Math.max(hi.leads,0.01))) + ' a ' + Math.round(30/Math.max(lo.leads,0.01)) + ' dias' : Math.round(wl) + ' a ' + Math.round(wh) + ' por semana';
+    $('p-sem').textContent = wh < 1 ? '1 conversa a cada ' + Math.max(1, Math.round(30/Math.max(hi.leads,0.01))) + ' a ' + Math.round(30/Math.max(lo.leads,0.01)) + ' dias' : Math.round(wl) + ' a ' + Math.round(wh) + ' por semana';
     var cplLo = hi.leads ? hi.gasto / hi.leads : 0, cplHi = lo.leads ? lo.gasto / lo.leads : 0;
-    $('p-cpl').textContent = 'Custo por clique no WhatsApp: ' + brl(Math.round(cplLo)) + ' a ' + brl(Math.round(cplHi));
+    $('p-cpl').textContent = 'Custo por conversa: ' + brl(Math.round(cplLo)) + ' a ' + brl(Math.round(cplHi));
+    var waLo = Math.max(0, Math.floor(lo.wa)), waHi = Math.max(waLo + 1, Math.round(hi.wa));
+    $('k-wa').textContent = waLo + ' a ' + waHi;
     $('k-cpc').textContent = brl(hi.cpc, 2) + ' a ' + brl(lo.cpc, 2);
     $('k-cliques').textContent = rng(lo.cliques, hi.cliques);
     $('k-imp').textContent = rng(lo.imp, hi.imp);
@@ -395,11 +403,13 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     $('f1d').textContent = 'termos “advogado + área” (Planejador)';
     $('f2').textContent = rng(lo.imp, hi.imp); $('f2d').textContent = 'de até ' + nf.format(rnd(hi.alc)) + ' possíveis';
     $('f3').textContent = rng(lo.cliques, hi.cliques); $('f3d').textContent = 'CTR de ' + String(r1(P.ctr)).replace('.', ',') + '%';
-    $('f4').textContent = leadsLo + ' a ' + leadsHi; $('f4d').textContent = String(r1(P.cvl)).replace('.', ',') + '% a ' + String(r1(P.cvh)).replace('.', ',') + '% das visitas';
+    $('f4').textContent = waLo + ' a ' + waHi; $('f4d').textContent = String(r1(P.cvl)).replace('.', ',') + '% a ' + String(r1(P.cvh)).replace('.', ',') + '% das visitas';
+    $('f5').textContent = leadsLo + ' a ' + leadsHi; $('f5d').textContent = 'perda de ' + String(r1(P.perda)).replace('.', ',') + '% entre o clique e a mensagem';
     $('b1').style.width = Math.min(100, lo.buscas / mx * 100) + '%';
     $('b2').style.width = Math.min(100, hi.imp / mx * 100) + '%';
     $('b3').style.width = Math.max(2, Math.min(100, hi.cliques / mx * 100 * 5)) + '%';
-    $('b4').style.width = Math.max(2, Math.min(100, hi.leads / mx * 100 * 50)) + '%';
+    $('b4').style.width = Math.max(2, Math.min(100, hi.wa / mx * 100 * 50)) + '%';
+    $('b5').style.width = Math.max(2, Math.min(100, hi.leads / mx * 100 * 50)) + '%';
 
     // Divisão por área
     $('split-box').hidden = idx.length < 2;
