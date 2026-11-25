@@ -1,14 +1,14 @@
 # Calculadora Jusfy Ads
 
-Estima, por área do direito e região (cidade, estado ou Brasil), quantas pessoas buscam um advogado no Google e quantas conversas no WhatsApp um investimento mensal deve gerar.
+Estima, por área do direito (uma ou várias) e região (estado ou Brasil), quantas pessoas buscam um advogado no Google e quantos cliques de contato no WhatsApp um investimento mensal deve gerar.
 
 Site: publicado pelo GitHub Pages a partir da pasta `docs/`.
 
 ## De onde vêm os números
 
-- **Buscas por mês**: Planejador de Palavras-chave do Google Ads (média dos últimos 12 meses, Rede de Pesquisa, português), somando os termos "advogado + área" de `keywords.json`, por local de quem pesquisa. Brasil, 27 estados e as cidades que o Google segmenta.
-- **Cidades com pouco dado**: volume estimado pela parcela da cidade nas buscas por "advogado" dentro do estado.
-- **Premissas** (CTR, CPC pago em relação ao lance do Planejador, taxa de clique que vira conversa e alcance por busca): calibradas com as campanhas reais da Jusfy Agency. O site publica só os números agregados, sem nome de cliente.
+- **Buscas por mês**: Planejador de Palavras-chave do Google Ads (média dos últimos 12 meses, Rede de Pesquisa, português), somando os termos "advogado + área" de `keywords.json`, por local de quem pesquisa: Brasil e 27 estados. As cidades são baixadas só para calibrar o modelo e não vão para o site.
+- **CPC**: média real das campanhas da Jusfy Ads, ajustada pela diferença de preço de cada área e estado no Planejador, com piso no 1º quartil real.
+- **Premissas** (CTR, parcela das visitas que clica no WhatsApp e alcance por busca): calibradas com as campanhas reais da Jusfy Ads. O site publica só os números agregados, sem nome de cliente.
 
 ## Como atualizar os dados
 
