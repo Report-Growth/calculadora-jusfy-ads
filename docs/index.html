@@ -280,10 +280,11 @@ summary span{font-weight:500;color:var(--muted);font-size:12px}
     $('method').innerHTML = '<b>Como calculamos.</b> Buscas por mês: soma da média mensal dos últimos 12 meses no Planejador de Palavras-chave do Google para os principais termos “advogado + área” de quem pesquisa no estado ou no Brasil (consulta de ' + fmtDate(d.meta.gerado_em) + '). Anúncios exibidos: buscas × anúncios possíveis por busca × parcela coberta. O custo por clique parte da média real da Jusfy Ads (' + brl(c.cpc, 2) + '), ajustada pela diferença de preço de cada área e estado no Planejador, com piso de ' + brl(c.cpc_piso, 2) + ', e sobe conforme a verba se aproxima do que a região comporta, porque as buscas mais baratas são usadas primeiro. Com várias áreas, a verba é dividida conforme a procura de cada uma. Cliques no WhatsApp: visitas à página × parcela que clica no botão do WhatsApp. Conversas: cliques no WhatsApp menos quem não chega a mandar mensagem (' + String(P.perda).replace('.', ',') + '% por padrão, premissa de mercado ainda não medida na Jusfy Ads). Base real: ' + c.campanhas + ' campanhas, ' + nf.format(c.cliques) + ' cliques, ' + nf.format(c.contatos) + ' cliques no WhatsApp e custo médio de ' + brl(c.custo_contato) + ' por clique no WhatsApp.';
     load(); bind(); render();
   }
-  function load(){ try { var s = JSON.parse(localStorage.getItem('jads-calc-v2')||'null'); if (s) { Object.assign(S, s.S||{}); Object.assign(P, s.P||{}); } } catch(e){}
+  // Guarda só as escolhas (áreas, estado, verba). As premissas sempre vêm calibradas do dados.json.
+  function load(){ try { var s = JSON.parse(localStorage.getItem('jads-calc-v3')||'null'); if (s) { Object.assign(S, s.S||{}); } } catch(e){}
     S.areas = (S.areas||[]).filter(function(id){ return A.some(function(a){ return a.id === id; }); });
     if (!S.areas.length) S.areas = ['trabalhista']; if (S.esc !== 'p') S.esc = 'e'; if (!UFN[S.uf]) S.uf = 'SP'; }
-  function save(){ try { localStorage.setItem('jads-calc-v2', JSON.stringify({S:S,P:P})); } catch(e){} }
+  function save(){ try { localStorage.setItem('jads-calc-v3', JSON.stringify({S:S})); localStorage.removeItem('jads-calc-v2'); } catch(e){} }
 
   function toggle(id){
     var k = S.areas.indexOf(id);
