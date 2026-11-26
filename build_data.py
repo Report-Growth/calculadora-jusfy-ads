@@ -83,9 +83,13 @@ for b in bench:
         continue
     i = AREAS.index(area)
     elegiveis = b["imp"] / b["is"]
+    # O alcance é medido contra o volume do ESTADO (a calculadora só trabalha com estado/Brasil);
+    # contra o volume da cidade o Planejador subestima e o fator infla.
+    est = LOC[estados[loc["uf"]]["loc"]["id"]] if loc["t"] == "c" else loc
     cpc = b["custo"] / b["cliques"]
     cal.append({"campanha": b["campanha"], "area": area, "local": loc["n"], "tipo": loc["t"], "busca_planejador": loc["v"][i],
-                "imp_elegiveis": round(elegiveis), "fator_alcance": round(elegiveis / max(loc["v"][i], 1), 2),
+                "busca_estado": est["v"][i],
+                "imp_elegiveis": round(elegiveis), "fator_alcance": round(elegiveis / max(est["v"][i], 1), 2),
                 "cliques": b["cliques"], "cpc_real": round(cpc, 2), "cpc_plan_low": loc["l"][i], "fator_cpc": round(cpc / loc["l"][i], 2) if loc["l"][i] else None,
                 "ctr": round(b["cliques"] / b["imp"], 4), "tx_contato": round(b["conv"] / b["cliques"], 4)})
 
@@ -105,7 +109,7 @@ calib = {
     "cpc_ref_planejador": round(st.median(c["cpc_plan_low"] for c in cal if c["cpc_plan_low"]), 2),
     "ctr": round(C / I, 4), "cpc": round(G / C, 2), "tx_contato": round(V / C, 4), "custo_contato": round(G / V, 2),
     "fator_alcance_mediana": round(st.median(c["fator_alcance"] for c in cal), 2) if cal else None,
-    "fator_alcance": round(st.median(fm)) if (fm := [c["fator_alcance"] for c in cal if c["cliques"] >= 100]) else None,
+    "fator_alcance": round(st.median(fm)) if (fm := [c["fator_alcance"] for c in cal]) else None,
     "n_alcance": len(fm),
     "fator_cpc_mediana": round(st.median(c["fator_cpc"] for c in cal if c["fator_cpc"]), 2) if cal else None,
     "is_mediana": round(st.median(b["is"] for b in agg if b["cliques"] >= 40), 3),
